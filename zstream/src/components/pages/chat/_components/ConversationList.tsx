@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { useChatStore } from '../chat.store';
 import { ChatEmptyState } from './ChatEmptyState';
@@ -9,6 +9,7 @@ export function ConversationList() {
   const activeTab = useChatStore((state) => state.activeTab);
   const conversations = useChatStore((state) => state.conversations);
   const favoriteIds = useChatStore((state) => state.favoriteIds);
+  const isLoadingConversations = useChatStore((state) => state.isLoadingConversations);
   const query = useChatStore((state) => state.query);
 
   const visibleConversations = useMemo(() => {
@@ -30,15 +31,26 @@ export function ConversationList() {
 
   return (
     <View className="overflow-hidden rounded-md border border-outline-200 bg-background-0 dark:border-outline-800 dark:bg-background-900">
-      {visibleConversations.map((conversation, index) => (
-        <ConversationListItem
-          conversation={conversation}
-          isLast={index === visibleConversations.length - 1}
-          key={conversation.id}
-        />
-      ))}
+      {isLoadingConversations ? (
+        <View className="items-center px-4 py-10">
+          <ActivityIndicator color="#14A800" />
+          <Text className="mt-3 text-sm font-semibold text-typography-700 dark:text-typography-300">
+            Loading chats
+          </Text>
+        </View>
+      ) : null}
 
-      {!visibleConversations.length ? <ChatEmptyState /> : null}
+      {!isLoadingConversations
+        ? visibleConversations.map((conversation, index) => (
+            <ConversationListItem
+              conversation={conversation}
+              isLast={index === visibleConversations.length - 1}
+              key={conversation.id}
+            />
+          ))
+        : null}
+
+      {!isLoadingConversations && !visibleConversations.length ? <ChatEmptyState /> : null}
     </View>
   );
 }

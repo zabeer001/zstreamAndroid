@@ -1,0 +1,11 @@
+emulator -list-avds
+emulator -avd Pixel_6 -no-snapshot
+
+cd /home/zabeer/dev/node-express/expo/zstreamAndroid/zstream
+npm install
+npm run android
+npx expo run:android
+
+# If the app is already installed and you only need Metro:
+npm start
+# then press "a" in the Expo terminal to open on Android

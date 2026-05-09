@@ -1,24 +1,28 @@
 import { create } from 'zustand';
 
-import { initialConversations, initialFavoriteIds } from './chat.data';
+import { initialFavoriteIds } from './chat.data';
 import type { ChatTab, Conversation } from './types';
 
 type ChatState = {
   activeTab: ChatTab;
   conversations: Conversation[];
   favoriteIds: Set<string>;
+  isLoadingConversations: boolean;
   query: string;
   clearQuery: () => void;
   selectConversation: (conversationId: string) => void;
   setActiveTab: (tab: ChatTab) => void;
+  setConversations: (conversations: Conversation[]) => void;
+  setIsLoadingConversations: (isLoadingConversations: boolean) => void;
   setQuery: (query: string) => void;
   toggleFavorite: (conversationId: string) => void;
 };
 
 export const useChatStore = create<ChatState>((set) => ({
   activeTab: 'recent',
-  conversations: initialConversations,
+  conversations: [],
   favoriteIds: new Set(initialFavoriteIds),
+  isLoadingConversations: true,
   query: '',
   clearQuery: () => set({ query: '' }),
   selectConversation: (conversationId) =>
@@ -28,6 +32,8 @@ export const useChatStore = create<ChatState>((set) => ({
       ),
     })),
   setActiveTab: (activeTab) => set({ activeTab }),
+  setConversations: (conversations) => set({ conversations }),
+  setIsLoadingConversations: (isLoadingConversations) => set({ isLoadingConversations }),
   setQuery: (query) => set({ query }),
   toggleFavorite: (conversationId) =>
     set((state) => {

@@ -1,36 +1,51 @@
-import { useMemo } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { useExploreStore } from '../explore.store';
 import { ExploreEmptyState } from './ExploreEmptyState';
 import { FeedPostCard } from './FeedPostCard';
 
-export function ExploreFeed() {
-  const activeCategory = useExploreStore((state) => state.activeCategory);
+type ExploreFeedProps = {
+  errorMessage?: string | null;
+  isLoading?: boolean;
+  onRetry?: () => void;
+};
+
+export function ExploreFeed({ errorMessage, isLoading = false, onRetry }: ExploreFeedProps) {
   const posts = useExploreStore((state) => state.posts);
-  const query = useExploreStore((state) => state.query);
 
-  const visiblePosts = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+  if (isLoading) {
+    return (
+      <View className="items-center rounded-md border border-outline-200 bg-background-0 px-4 py-12 dark:border-outline-800 dark:bg-background-900">
+        <ActivityIndicator color="#14A800" size="large" />
+        <Text className="mt-3 text-sm font-semibold text-typography-600 dark:text-typography-300">
+          Loading posts
+        </Text>
+      </View>
+    );
+  }
 
-    return posts.filter((post) => {
-      if (activeCategory !== 'all' && post.category !== activeCategory) return false;
-      if (!normalizedQuery) return true;
-
-      return [post.author, post.role, post.title, post.body, post.category, ...post.tags]
-        .join(' ')
-        .toLowerCase()
-        .includes(normalizedQuery);
-    });
-  }, [activeCategory, posts, query]);
+  if (errorMessage) {
+    return (
+      <View className="items-center rounded-md border border-outline-200 bg-background-0 px-4 py-10 dark:border-outline-800 dark:bg-background-900">
+        <Text className="text-center text-sm font-semibold text-typography-700 dark:text-typography-300">
+          {errorMessage}
+        </Text>
+        {onRetry ? (
+          <Pressable className="mt-4 rounded-md bg-success-600 px-4 py-2" onPress={onRetry}>
+            <Text className="text-sm font-bold text-white">Try again</Text>
+          </Pressable>
+        ) : null}
+      </View>
+    );
+  }
 
   return (
     <View className="gap-3">
-      {visiblePosts.map((post) => (
-        <FeedPostCard key={post.id} post={post} />
+      {posts.map((post) => (
+        <FeedPostCard key={post.feedItemId || post._id} post={post} />
       ))}
 
-      {!visiblePosts.length ? <ExploreEmptyState /> : null}
+      {!posts.length ? <ExploreEmptyState /> : null}
     </View>
   );
 }

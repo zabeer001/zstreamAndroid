@@ -1,5 +1,5 @@
-import { ChatPage } from "@/src/components/pages/chat/ChatPage";
+import { ConversationPage } from '@/src/components/pages/chat/ConversationPage';
 
 export default function ChatScreen() {
-  return <ChatPage />;
+  return <ConversationPage />;
 }

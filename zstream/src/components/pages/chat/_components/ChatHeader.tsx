@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router, type Href } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
 import { useChatStore } from '../chat.store';
@@ -19,9 +20,10 @@ export function ChatHeader() {
         </Text>
       </View>
       <Pressable
-        accessibilityLabel="Start new message"
-        className="h-10 w-10 items-center justify-center rounded-md border border-outline-200 bg-background-0 dark:border-outline-800 dark:bg-background-900">
-        <Ionicons name="create-outline" size={18} color="#6B7280" />
+        accessibilityLabel="Find friends"
+        className="h-10 w-10 items-center justify-center rounded-md border border-outline-200 bg-background-0 dark:border-outline-800 dark:bg-background-900"
+        onPress={() => router.push('/chat/friends' as Href)}>
+        <Ionicons name="person-add-outline" size={18} color="#6B7280" />
       </Pressable>
     </View>
   );

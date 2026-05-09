@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router, type Href } from 'expo-router';
 import { Image } from 'expo-image';
 import { Pressable, Text, View } from 'react-native';
 
@@ -18,13 +19,25 @@ export function ConversationListItem({ conversation, isLast }: ConversationListI
   return (
     <Pressable
       className={`border-outline-100 px-3 py-3 dark:border-outline-800 ${isLast ? '' : 'border-b'}`}
-      onPress={() => selectConversation(conversation.id)}>
+      onPress={() => {
+        selectConversation(conversation.id);
+
+        if (conversation.targetUserId) {
+          router.push(`/chat/${encodeURIComponent(conversation.targetUserId)}` as Href);
+        }
+      }}>
       <View className="flex-row items-center gap-3">
-        <Image
-          contentFit="cover"
-          source={conversation.avatar}
-          style={{ borderRadius: 999, height: 42, width: 42 }}
-        />
+        {conversation.avatar ? (
+          <Image
+            contentFit="cover"
+            source={conversation.avatar}
+            style={{ borderRadius: 999, height: 42, width: 42 }}
+          />
+        ) : (
+          <View className="h-[42px] w-[42px] items-center justify-center rounded-full bg-background-100 dark:bg-background-800">
+            <Ionicons name="person-outline" size={19} color="#9CA3AF" />
+          </View>
+        )}
 
         <View className="min-w-0 flex-1">
           <View className="flex-row items-center gap-2">
@@ -35,11 +48,13 @@ export function ConversationListItem({ conversation, isLast }: ConversationListI
             </Text>
             <Text className="text-xs text-typography-400">{conversation.timestamp}</Text>
           </View>
-          <Text
-            className="mt-0.5 text-xs text-typography-500 dark:text-typography-400"
-            numberOfLines={1}>
-            {conversation.title}
-          </Text>
+          {conversation.title ? (
+            <Text
+              className="mt-0.5 text-xs text-typography-500 dark:text-typography-400"
+              numberOfLines={1}>
+              {conversation.title}
+            </Text>
+          ) : null}
           <Text
             className={`mt-1 text-sm ${
               conversation.unread

@@ -2,6 +2,7 @@ export type ChatTab = 'recent' | 'all' | 'favorites';
 
 export type Conversation = {
   id: string;
+  targetUserId?: string;
   name: string;
   title: string;
   avatar: string;

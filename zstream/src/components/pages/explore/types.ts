@@ -1,21 +1,10 @@
-export type FeedCategory = 'all' | 'newspaper' | 'tech' | 'career';
+import type { Post } from '@/src/lib/api';
 
-export type FeedPost = {
-  id: string;
-  author: string;
-  role: string;
-  avatar: string;
-  postedAt: string;
-  category: Exclude<FeedCategory, 'all'>;
-  title: string;
-  body: string;
-  tags: string[];
-  loves: number;
-  shares: number;
-  comments: string[];
-};
+export type FeedCategory = 'all' | 'newspaper' | 'tech' | 'career';
 
 export type FeedCategoryItem = {
   key: FeedCategory;
   label: string;
 };
+
+export type FeedPost = Post;

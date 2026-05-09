@@ -2,6 +2,8 @@ import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SettingsHeader } from './_components/SettingsHeader';
+import { BackendApiTestCard } from './_components/BackendApiTestCard';
+import { LogoutButton } from './_components/LogoutButton';
 import { ThemeModeCard } from './_components/ThemeModeCard';
 
 export function SettingsPage() {
@@ -13,6 +15,8 @@ export function SettingsPage() {
         showsVerticalScrollIndicator={false}>
         <SettingsHeader />
         <ThemeModeCard />
+        <BackendApiTestCard />
+        <LogoutButton />
       </ScrollView>
     </SafeAreaView>
   );

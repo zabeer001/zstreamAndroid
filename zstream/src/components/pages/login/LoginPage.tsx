@@ -1,55 +1,28 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { MOBILE_SSO_CALLBACK_URL, MOBILE_SSO_START_URL } from '@/src/lib/config';
-import { getMobileAuthDeviceInfo } from '@/src/lib/mobile-auth-device';
-import { useAuthStore } from '@/src/stores/auth.store';
+import { MOBILE_SSO_CALLBACK_URL, WEB_LOGIN_URL } from '@/src/lib/config';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginPage = () => {
-  const router = useRouter();
-  const loginWithBackendSsoCode = useAuthStore((state) => state.loginWithBackendSsoCode);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const completeSsoLogin = async (callbackUrl: string) => {
-    const parsedUrl = Linking.parse(callbackUrl);
-    const codeParam = parsedUrl.queryParams?.code;
-    const errorParam = parsedUrl.queryParams?.error;
-    const code = Array.isArray(codeParam) ? codeParam[0] : codeParam;
-    const ssoError = Array.isArray(errorParam) ? errorParam[0] : errorParam;
-
-    if (ssoError) {
-      throw new Error(String(ssoError));
-    }
-
-    if (!code) {
-      throw new Error('Google did not return a login code.');
-    }
-
-    await loginWithBackendSsoCode(String(code));
-    router.replace('/explore');
-  };
 
   const handleGoogleLogin = async () => {
     if (isSubmitting) return;
 
     try {
       setIsSubmitting(true);
-      const { deviceId, deviceName } = await getMobileAuthDeviceInfo();
-      const startUrl = new URL(MOBILE_SSO_START_URL);
-      startUrl.searchParams.set('device_id', deviceId);
-      startUrl.searchParams.set('device_name', deviceName);
+      const startUrl = new URL(WEB_LOGIN_URL);
+      startUrl.searchParams.set('client', 'mobile');
+      startUrl.searchParams.set('redirect_uri', MOBILE_SSO_CALLBACK_URL);
 
       const result = await WebBrowser.openAuthSessionAsync(startUrl.toString(), MOBILE_SSO_CALLBACK_URL);
 
       if (result.type === 'success') {
-        await completeSsoLogin(result.url);
         return;
       }
 
